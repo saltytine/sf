@@ -1,0 +1,10 @@
+#!/bin/bash
+
+function prev {
+  offset=30
+  b=$((($1-$offset)*($1>$offset)))
+  e=$(($1+$offset))
+  bat --color=always -r "$b:$e" -H "$1" "$2"
+}
+
+prev "$1" "$2"

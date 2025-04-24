@@ -1,0 +1,10 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+
+PREVIEW="echo '{1}' && echo -e '\n\n' && echo \'{2}\' | fold -w 80"
+BIND="enter:execute(echo {} ),
+ctrl-l:execute(echo \'{2}\' | xclip -select clipboard),
+ctrl-y:execute-silent(echo {1} | xclip -select clipboard)"
+
+fd -L '' "$@" | xargs -I '{}' "$SCRIPT_DIR/seek-list-elf" '{}' 2> /dev/null | sk --bind="${BIND//[$'\t\r\n']}" --ansi --delimiter=" :: " --preview="$PREVIEW"

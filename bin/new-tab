@@ -1,0 +1,15 @@
+#!/bin/bash
+
+FILENAME="$1"
+if [[ -d "$FILENAME" ]]; then
+  DIRNAME="$FILENAME"
+else
+  DIRNAME=`dirname "$FILENAME"`
+fi
+
+if [ "$TERM_PROGRAM" = tmux ]; then
+  ABS_DIR=$(realpath $DIRNAME)
+  tmux new-window -n $(basename $DIRNAME) -c "$ABS_DIR"
+else
+  zellij action new-tab --layout default --cwd "$DIRNAME" --name $(basename $DIRNAME)
+fi

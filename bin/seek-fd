@@ -1,0 +1,16 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+
+PREVIEW="$SCRIPT_DIR/seek-preview-fd {}"
+BIND="enter:execute($SCRIPT_DIR/seek-bind-noline {}),
+ctrl-v:execute(bat {}),
+ctrl-f:execute($SCRIPT_DIR/seek-fd-d {}),
+ctrl-i:execute($SCRIPT_DIR/seek-d {}),
+ctrl-e:execute($SCRIPT_DIR/seek {}),
+ctrl-l:execute($SCRIPT_DIR/new-tab {}),
+ctrl-a:execute(cs -f {} -w 1000),
+ctrl-y:execute-silent(echo {} | xclip -select clipboard)"
+
+fd -L '' "$@"  | sk --bind="${BIND//[$'\t\r\n']}" --ansi --preview="$PREVIEW"
+

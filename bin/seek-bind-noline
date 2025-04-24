@@ -1,0 +1,59 @@
+#!/bin/bash
+
+FILE_PATH="$1"
+
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+WORKDIR=`dirname "$FILE_PATH"`
+FILE=`basename "$FILE_PATH"`
+
+file_type=`file -L -bi "$FILE_PATH"`
+
+if [ -d "$FILE_PATH" ]; then
+  hx -w "$FILE_PATH"
+else
+  if [[ $file_type == *"charset=binary"* ]]; then
+    case $file_type in
+      "application/x-sharedlib;"*)
+      nm -gDC "$FILE_PATH" | sk
+      ;;
+      "application/x-archive;"*)
+      readelf -Ws "$FILE_PATH" | sk
+      ;;
+      "application/x-object;"*)
+      readelf -Ws "$FILE_PATH" | sk
+      ;;
+      "application/pdf;"*)
+      atril "$FILE_PATH" 2>&1 1>/dev/null &
+      ;;
+      "image/vnd.djvu;"*)
+      atril "$FILE_PATH" 2>&1 1>/dev/null &
+      ;;
+      "application/epub"*)
+      atril "$FILE_PATH" 2>&1 1>/dev/null &
+      ;;
+      *)
+      # hexyl --color=always -n 16384 "$1"
+      strings -tx "$FILE_PATH" | sk
+      ;;
+    esac
+  else
+    case $file_type in
+      "application/pdf;"*)
+      atril "$FILE_PATH" 2>&1 1>/dev/null &
+      ;;
+      "image/vnd.djvu;"*)
+      atril "$FILE_PATH" 2>&1 1>/dev/null &
+      ;;
+      "text/xml;"*)
+      brave-browser "$FILE_PATH" 2>&1 1>/dev/null &
+      ;;
+      "application/epub"*)
+      atril "$FILE_PATH" 2>&1 1>/dev/null &
+      ;;
+      *)
+      hx -w "$WORKDIR" "$FILE_PATH"
+      ;;
+    esac
+  fi
+fi
+

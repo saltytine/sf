@@ -1,0 +1,36 @@
+#!/bin/bash
+
+
+export IFS=$'\n'
+
+function prev {
+  filepath="$1"
+  file_type=`file -L -bi "$filepath"`
+  if [ -d $filepath ]; then
+    exa --color=always -al "$filepath"
+  else
+    if [[ $file_type == *"charset=binary"* ]]; then
+      case $file_type in
+        "application/x-sharedlib; charset=binary")
+        for line in $(nm -gDC "$filepath");do
+          echo "$filepath" " :: " "$line"
+        done
+        ;;
+        "application/x-archive; charset=binary")
+        for line in $(readelf -Ws "$filepath");do
+          echo "$filepath" " :: " "$line"
+        done
+        ;;
+        "application/x-object; charset=binary")
+        for line in $(readelf -Ws "$filepath");do
+          echo "$filepath" " :: " "$line"
+        done
+        ;;
+        *)
+        ;;
+      esac
+    fi
+  fi
+}
+
+prev "$1"

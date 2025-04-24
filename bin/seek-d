@@ -1,0 +1,24 @@
+#!/bin/bash
+
+FILENAME="$1"
+if [[ -d "$FILENAME" ]]; then
+  DIRNAME="$FILENAME"
+else
+  DIRNAME="$(dirname $FILENAME)"
+fi
+
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+
+SKIM_COMMAND="rg --follow --with-filename --no-heading --color=always --line-number -M 300 '{}' $DIRNAME"
+PREVIEW="$SCRIPT_DIR/seek-preview {2} {1}"
+BIND="enter:execute($SCRIPT_DIR/seek-bind {1} {2}),
+ctrl-v:execute(bat {1} -H {2}),
+ctrl-f:execute($SCRIPT_DIR/seek-fd-d {1}),
+ctrl-i:execute($SCRIPT_DIR/seek-d {1}),
+ctrl-e:execute($SCRIPT_DIR/seek {1}),
+ctrl-l:execute($SCRIPT_DIR/new-tab {1}),
+ctrl-y:execute-silent(echo {} | xclip -select clipboard)"
+
+sk --bind="${BIND//[$'\t\r\n']}" --ansi -i -c "$SKIM_COMMAND" --delimiter=: --preview="$PREVIEW"
+
+

@@ -1,0 +1,31 @@
+#!/bin/bash
+
+function prev {
+  filepath="$1"
+  file_type=`file -L -bi "$filepath"`
+  if [ -d $filepath ]; then
+    exa --color=always -al "$filepath"
+  else
+    if [[ $file_type == *"charset=binary"* ]]; then
+      case $file_type in
+        "application/x-sharedlib; charset=binary")
+        nm -gDC "$filepath"
+        ;;
+        "application/x-archive; charset=binary")
+        readelf -Ws "$filepath"
+        ;;
+        "application/x-object; charset=binary")
+        readelf -Ws "$filepath"
+        ;;
+        *)
+        # hexyl --color=always -n 16384 "$filepath"
+        strings -tx "$filepath"
+        ;;
+      esac
+    else
+      bat --color=always "$filepath"
+    fi
+  fi
+}
+
+prev "$1"

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+FILE_PATH="$1"
+LINENUM="$2"
+
+WORKDIR=`dirname "$FILE_PATH"`
+FILE=`basename "$FILE_PATH"`
+
+hx -w "$WORKDIR" "$FILE_PATH" "+$LINENUM"
+
