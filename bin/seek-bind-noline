@@ -6,10 +6,20 @@ SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
 WORKDIR=`dirname "$FILE_PATH"`
 FILE=`basename "$FILE_PATH"`
 
+if ! [ -n "$EDT" ]; then
+	EDT=hx
+fi
+
 file_type=`file -L -bi "$FILE_PATH"`
 
 if [ -d "$FILE_PATH" ]; then
-  hx -w "$FILE_PATH"
+  if [[ $EDT == "vim" ]]; then
+    # vim
+    vim --cmd ":cd $WORKDIR" "$FILE_PATH" "+$LINENUM"
+  else
+    #hx
+    hx -w "$WORKDIR" "$FILE_PATH" "+$LINENUM"
+  fi
 else
   if [[ $file_type == *"charset=binary"* ]]; then
     case $file_type in
@@ -51,7 +61,13 @@ else
       atril "$FILE_PATH" 2>&1 1>/dev/null &
       ;;
       *)
-      hx -w "$WORKDIR" "$FILE_PATH"
+      if [[ $EDT == "vim" ]]; then
+        # vim
+        vim --cmd ":cd $WORKDIR" "$FILE_PATH" "+$LINENUM"
+      else
+        #hx
+        hx -w "$WORKDIR" "$FILE_PATH" "+$LINENUM"
+      fi
       ;;
     esac
   fi
