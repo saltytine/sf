@@ -1,0 +1,5 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+
+fd -L '' "$@" | xargs -I '{}' "$SCRIPT_DIR/seek-list-elf" '{}' 2> /dev/null
