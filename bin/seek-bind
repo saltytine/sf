@@ -6,5 +6,14 @@ LINENUM="$2"
 WORKDIR=`dirname "$FILE_PATH"`
 FILE=`basename "$FILE_PATH"`
 
-hx -w "$WORKDIR" "$FILE_PATH" "+$LINENUM"
+if ! [ -n "$EDT" ]; then
+	EDT=hx
+fi
 
+if [[ $EDT == "vim" ]]; then
+	# vim
+	vim --cmd ":cd $WORKDIR" "$FILE_PATH" "+$LINENUM"
+else
+	#hx
+	hx -w "$WORKDIR" "$FILE_PATH" "+$LINENUM"
+fi
